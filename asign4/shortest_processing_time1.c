@@ -2,27 +2,62 @@
 #include<stdlib.h>
 #include<unistd.h>
 #include<signal.h>
+#include<time.h>
 
 struct process{
     int pid;
     int bt;
 };
 
+int partition(int low,int high){
+	int i,j,pivot,temp;
+	pivot=ar[high];
+	i=low-1;
+	for(j=low;j<=high-1;j++){
+		if(ar[j]<pivot){
+			i=i+1;
+			temp=ar[i];
+			ar[i]=ar[j];
+			ar[j]=temp;
+		}
+	}
+
+	temp=ar[i+1];
+	ar[i+1]=ar[high];
+	ar[high]=temp;
+	return i+1;
+}
+
+void quicksort(int low,int high){
+	if(low<high){
+		int q;
+		q=partition(low,high);
+		quicksort(low,q-1);
+		quicksort(q+1,high);
+	}
+}
+
 int main()
 {   
-    int no_of_process,i,new_process,j;
+	int no_of_process,i,new_process,j;
+	clock_t startime,endtime;
+	double timetaken;
     printf("Enter the number of process\n");
     scanf("%d",&no_of_process);
 	struct process p[no_of_process],temp;
 	int wt[no_of_process],tat[no_of_process];
 	float wtavg,tatavg;
     for(i=0;i<no_of_process;i++){
-        new_process=fork();
+		new_process=fork();
+		startime=clock();
         if (new_process == 0) {
             while(1);
-        }
+		}
+		endtime=clock();
+		timetaken=(double)(endtime-startime)/CLOCKS_PER_SEC;
+		printf("%f\n",timetaken);
         p[i].pid = new_process;
-        p[i].bt = rand()%100;
+        p[i].bt = timetaken;//rand()%100;
         kill(new_process,SIGKILL);
     }
 	for(i=0;i<no_of_process-1;i++){
